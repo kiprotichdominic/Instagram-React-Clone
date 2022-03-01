@@ -1,25 +1,36 @@
-import logo from './logo.svg';
+import React, { useState,useEffect } from 'react';
+import { Post }  from './components';
+import { db } from './firebase';
 import './App.css';
 
-function App() {
+
+const App = () => {
+  
+  const [posts, setPosts] = useState([])
+
+  useEffect(() => {
+    db.collection('posts').onSnapshot(snapshot=>{
+      // everytime posts are added to firebase this code is fired
+      setPosts(snapshot.docs.map(
+        doc=>doc.data()))
+    })
+  }, [])
+  
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='app'>
+        {/* Header */}
+        <div className="app__header">
+            <img src="https://bit.ly/3JULpAn" alt="instagram" className="app__headerImage" />
+        </div>
+        {/* Posts */}
+        {
+          posts.map(post=>(
+            <Post username={post.username} caption={post.caption} imageUrl={post.imageUrl}/>
+          ))
+        }
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
